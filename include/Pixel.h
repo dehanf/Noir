@@ -4,7 +4,7 @@
 namespace img {
 
 
-structPixel {
+struct Pixel {
         unsigned char r; //1 byte allocated for r
         unsigned char g;
         unsigned char b;
