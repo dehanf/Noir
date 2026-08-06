@@ -2,6 +2,12 @@
 
 namespace img{
 
+Image::Image()
+    : width{0},
+      height{0},
+      pixels{nullptr}
+{
+}
 
 Image::Image(int width,int height){
     this->width = width;
@@ -40,6 +46,29 @@ void Image::setPixel(int x, int y, const Pixel& pixel){
     pixels[y*width + x] = pixel;
 
 }
+
+bool Image::resizeImage(
+    int newWidth,
+    int newHeight
+)
+{
+    if (newWidth <= 0 || newHeight <= 0) {
+        return false;
+    }
+
+    Pixel* newPixels =
+        new Pixel[newWidth * newHeight]{}; //first allocate the memory for the new pixel array
+
+    delete[] pixels; //delete the old pixel array to avoid memory leak
+
+    pixels = newPixels; //assign the new pixel array to the pixels member variable
+    width = newWidth;
+    height = newHeight;
+
+    return true;
+}
+
+
 
 
 }
