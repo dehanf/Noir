@@ -134,13 +134,42 @@ int main()
         std::cerr << "Failed to save gradient.ppm\n";
         return 1;
     }
+    img::Image loadedImage;
+
+    if (!img::loadPPM(
+            "images/gradient.ppm",
+            loadedImage
+        )) {
+        std::cerr
+            << "Failed to load gradient.ppm\n";
+
+        return 1;
+    }
+
+    if (!img::savePPM(
+            loadedImage,
+            "images/gradient_copy.ppm"
+        )) {
+        std::cerr
+            << "Failed to save gradient_copy.ppm\n";
+
+        return 1;
+    }
 
     std::cout
-        << "Generated images successfully:\n"
+        << "Loaded image size: "
+        << loadedImage.getWidth()
+        << " x "
+        << loadedImage.getHeight()
+        << '\n';
+
+    std::cout
+        << "Generated and loaded images successfully:\n"
         << "- images/red.ppm\n"
         << "- images/stripes.ppm\n"
         << "- images/checkerboard.ppm\n"
-        << "- images/gradient.ppm\n";
+        << "- images/gradient.ppm\n"
+        << "- images/gradient_copy.ppm\n";
 
     return 0;
 }
