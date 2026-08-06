@@ -10,9 +10,11 @@ class Image{
 private:
     int width;
     int height;
-
     Pixel* pixels;
+
+
 public:
+    Image(); //default constructor
     Image(int width, int height); //constructor
 
     ~Image(); //destructor
@@ -29,7 +31,7 @@ public:
 
     void setPixel(int x,int y, const Pixel& pixel); // set the pixel to x,y without modifyin gthe pixel
 
-
+    bool resizeImage(int newWidth, int newHeight); //resize the image to newWidth and newHeight
 
 
 

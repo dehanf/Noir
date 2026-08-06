@@ -12,6 +12,8 @@ bool savePPM(
     const std::string& filename
 );
 
+bool loadPPM(const std::string& filename, Image& image);
+
 }
 
 #endif
