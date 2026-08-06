@@ -1,5 +1,18 @@
+CXX = clang++
+CXXFLAGS = -std=c++17 -Wall -Wextra -Iinclude
+
+SOURCES = src/main.cpp src/Image.cpp src/ImageIO.cpp
+TARGET = build/noir
+
 build:
-	clang++ -std=c++17 src/*.cpp -Iinclude -o build/image_app
+	mkdir -p build images
+	$(CXX) $(CXXFLAGS) $(SOURCES) -o $(TARGET)
 
 run: build
-	./build/image_app
+	./$(TARGET)
+
+clean:
+	rm -rf build
+	rm -f images/*.ppm
+
+.PHONY: build run clean
