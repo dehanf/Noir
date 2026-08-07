@@ -1,175 +1,115 @@
 #include <iostream>
 
+#include "CPUProcessor.h"
 #include "Image.h"
 #include "ImageIO.h"
 
-void fillSolid(
-    img::Image& image,
-    const img::Pixel& color
-)
-{
-    for (int y = 0; y < image.getHeight(); ++y) {
-        for (int x = 0; x < image.getWidth(); ++x) {
-            image.setPixel(x, y, color);
-        }
-    }
-}
-
-void fillStripes(img::Image& image)
-{
-    const img::Pixel red{255, 0, 0};
-    const img::Pixel green{0, 255, 0};
-    const img::Pixel blue{0, 0, 255};
-
-    const int stripeHeight = image.getHeight() / 3;
-
-    for (int y = 0; y < image.getHeight(); ++y) {
-        for (int x = 0; x < image.getWidth(); ++x) {
-            if (y < stripeHeight) {
-                image.setPixel(x, y, red);
-            }
-            else if (y < stripeHeight * 2) {
-                image.setPixel(x, y, green);
-            }
-            else {
-                image.setPixel(x, y, blue);
-            }
-        }
-    }
-}
-
-void fillCheckerboard(
-    img::Image& image,
-    int blockSize = 40
-)
-{
-    const img::Pixel black{0, 0, 0};
-    const img::Pixel white{255, 255, 255};
-
-    for (int y = 0; y < image.getHeight(); ++y) {
-        for (int x = 0; x < image.getWidth(); ++x) {
-            const int blockX = x / blockSize;
-            const int blockY = y / blockSize;
-
-            const bool isWhite =
-                (blockX + blockY) % 2 == 0;
-
-            if (isWhite) {
-                image.setPixel(x, y, white);
-            }
-            else {
-                image.setPixel(x, y, black);
-            }
-        }
-    }
-}
-
-void fillGradient(img::Image& image)
-{
-    const int width = image.getWidth();
-    const int height = image.getHeight();
-
-    for (int y = 0; y < height; ++y) {
-        for (int x = 0; x < width; ++x) {
-            const unsigned char red =
-                static_cast<unsigned char>(
-                    255 * x / (width - 1)
-                );
-
-            const unsigned char green =
-                static_cast<unsigned char>(
-                    255 * y / (height - 1)
-                );
-
-            const img::Pixel color{
-                red,
-                green,
-                128
-            };
-
-            image.setPixel(x, y, color);
-        }
-    }
-}
-
 int main()
 {
-    img::Image redImage{400, 300};
-    fillSolid(redImage, img::Pixel{255, 0, 0});
+    const std::string inputPath =
+        "images/gradient.ppm";
 
-    if (!img::savePPM(redImage, "images/red.ppm")) {
-        std::cerr << "Failed to save red.ppm\n";
+    img::Image invertedImage;
+
+    if (!img::loadPPM(inputPath, invertedImage)) {
+        std::cerr << "Failed to load input image\n";
         return 1;
     }
 
-    img::Image stripesImage{400, 300};
-    fillStripes(stripesImage);
+    img::CPUProcessor::invert(invertedImage);
 
     if (!img::savePPM(
-            stripesImage,
-            "images/stripes.ppm"
+            invertedImage,
+            "images/gradient_inverted.ppm"
         )) {
-        std::cerr << "Failed to save stripes.ppm\n";
+        std::cerr << "Failed to save inverted image\n";
         return 1;
     }
 
-    img::Image checkerboardImage{400, 300};
-    fillCheckerboard(checkerboardImage);
+    img::Image grayscaleImage;
+
+    if (!img::loadPPM(inputPath, grayscaleImage)) {
+        std::cerr << "Failed to load input image\n";
+        return 1;
+    }
+
+    img::CPUProcessor::grayscale(grayscaleImage);
 
     if (!img::savePPM(
-            checkerboardImage,
-            "images/checkerboard.ppm"
+            grayscaleImage,
+            "images/gradient_grayscale.ppm"
         )) {
-        std::cerr << "Failed to save checkerboard.ppm\n";
+        std::cerr << "Failed to save grayscale image\n";
         return 1;
     }
 
-    img::Image gradientImage{400, 300};
-    fillGradient(gradientImage);
+    img::Image brightImage;
+
+    if (!img::loadPPM(inputPath, brightImage)) {
+        std::cerr << "Failed to load input image\n";
+        return 1;
+    }
+
+    img::CPUProcessor::adjustBrightness(
+        brightImage,
+        50
+    );
 
     if (!img::savePPM(
-            gradientImage,
-            "images/gradient.ppm"
+            brightImage,
+            "images/gradient_bright.ppm"
         )) {
-        std::cerr << "Failed to save gradient.ppm\n";
+        std::cerr << "Failed to save bright image\n";
         return 1;
     }
-    img::Image loadedImage;
 
-    if (!img::loadPPM(
-            "images/gradient.ppm",
-            loadedImage
-        )) {
-        std::cerr
-            << "Failed to load gradient.ppm\n";
+    img::Image contrastImage;
 
+    if (!img::loadPPM(inputPath, contrastImage)) {
+        std::cerr << "Failed to load input image\n";
         return 1;
     }
+
+    img::CPUProcessor::adjustContrast(
+        contrastImage,
+        1.8
+    );
 
     if (!img::savePPM(
-            loadedImage,
-            "images/gradient_copy.ppm"
+            contrastImage,
+            "images/gradient_contrast.ppm"
         )) {
-        std::cerr
-            << "Failed to save gradient_copy.ppm\n";
+        std::cerr << "Failed to save contrast image\n";
+        return 1;
+    }
 
+    img::Image thresholdImage;
+
+    if (!img::loadPPM(inputPath, thresholdImage)) {
+        std::cerr << "Failed to load input image\n";
+        return 1;
+    }
+
+    img::CPUProcessor::threshold(
+        thresholdImage,
+        128
+    );
+
+    if (!img::savePPM(
+            thresholdImage,
+            "images/gradient_threshold.ppm"
+        )) {
+        std::cerr << "Failed to save threshold image\n";
         return 1;
     }
 
     std::cout
-        << "Loaded image size: "
-        << loadedImage.getWidth()
-        << " x "
-        << loadedImage.getHeight()
-        << '\n';
-
-    std::cout
-        << "Generated and loaded images successfully:\n"
-        << "- images/red.ppm\n"
-        << "- images/stripes.ppm\n"
-        << "- images/checkerboard.ppm\n"
-        << "- images/gradient.ppm\n"
-        << "- images/gradient_copy.ppm\n";
+        << "CPU filters completed successfully:\n"
+        << "- images/gradient_inverted.ppm\n"
+        << "- images/gradient_grayscale.ppm\n"
+        << "- images/gradient_bright.ppm\n"
+        << "- images/gradient_contrast.ppm\n"
+        << "- images/gradient_threshold.ppm\n";
 
     return 0;
 }
