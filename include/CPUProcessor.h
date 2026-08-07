@@ -5,7 +5,7 @@
 
 namespace img{
 
-class CPUPRocessor{
+class CPUProcessor{
 
 public:
     static void grayscale(Image& image);
