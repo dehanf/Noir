@@ -1,7 +1,12 @@
 CXX = clang++
 CXXFLAGS = -std=c++17 -Wall -Wextra -Iinclude
 
-SOURCES = src/main.cpp src/Image.cpp src/ImageIO.cpp
+SOURCES = \
+	src/main.cpp \
+	src/Image.cpp \
+	src/ImageIO.cpp \
+	src/CPUProcessor.cpp
+
 TARGET = build/noir
 
 build:
