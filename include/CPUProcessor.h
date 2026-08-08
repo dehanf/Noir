@@ -17,12 +17,21 @@ public:
 
     static void threshold(Image& image, unsigned char threshold=128);
 
+    // convolution filters
+    static void boxBlur(Image& image);
+    static void gaussianBlur(Image& image);
+    static void sharpen(Image& image);
+    static void sobelEdgeDetection(Image& image);
+
+
 private:
 
     static unsigned char clamp(int value); // clamping stays private because it is a helper function that is only used internally by the class methods
     // double uses 8 bytes, but unsigned char uses only 1 byte
+
+    static void applyKernel3x3(Image& image, const int kernel[3][3], int divisor);
 };
 }
 
 
-#endif CPU_PROCESSOR_H
+#endif 
