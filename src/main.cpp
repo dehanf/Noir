@@ -1,115 +1,75 @@
 #include <iostream>
 
 #include "CPUProcessor.h"
-#include "Image.h"
 #include "ImageIO.h"
 
 int main()
 {
-    const std::string inputPath =
+    const std::string source =
         "images/gradient.ppm";
 
-    img::Image invertedImage;
+    img::Image boxImage;
 
-    if (!img::loadPPM(inputPath, invertedImage)) {
-        std::cerr << "Failed to load input image\n";
+    if (!img::loadPPM(source, boxImage)) {
+        std::cerr << "Failed to load image\n";
         return 1;
     }
 
-    img::CPUProcessor::invert(invertedImage);
+    img::CPUProcessor::boxBlur(boxImage);
 
-    if (!img::savePPM(
-            invertedImage,
-            "images/gradient_inverted.ppm"
-        )) {
-        std::cerr << "Failed to save inverted image\n";
-        return 1;
-    }
-
-    img::Image grayscaleImage;
-
-    if (!img::loadPPM(inputPath, grayscaleImage)) {
-        std::cerr << "Failed to load input image\n";
-        return 1;
-    }
-
-    img::CPUProcessor::grayscale(grayscaleImage);
-
-    if (!img::savePPM(
-            grayscaleImage,
-            "images/gradient_grayscale.ppm"
-        )) {
-        std::cerr << "Failed to save grayscale image\n";
-        return 1;
-    }
-
-    img::Image brightImage;
-
-    if (!img::loadPPM(inputPath, brightImage)) {
-        std::cerr << "Failed to load input image\n";
-        return 1;
-    }
-
-    img::CPUProcessor::adjustBrightness(
-        brightImage,
-        50
+    img::savePPM(
+        boxImage,
+        "images/box_blur.ppm"
     );
 
-    if (!img::savePPM(
-            brightImage,
-            "images/gradient_bright.ppm"
-        )) {
-        std::cerr << "Failed to save bright image\n";
+
+    img::Image gaussianImage;
+
+    if (!img::loadPPM(source, gaussianImage)) {
         return 1;
     }
 
-    img::Image contrastImage;
-
-    if (!img::loadPPM(inputPath, contrastImage)) {
-        std::cerr << "Failed to load input image\n";
-        return 1;
-    }
-
-    img::CPUProcessor::adjustContrast(
-        contrastImage,
-        1.8
+    img::CPUProcessor::gaussianBlur(
+        gaussianImage
     );
 
-    if (!img::savePPM(
-            contrastImage,
-            "images/gradient_contrast.ppm"
-        )) {
-        std::cerr << "Failed to save contrast image\n";
-        return 1;
-    }
-
-    img::Image thresholdImage;
-
-    if (!img::loadPPM(inputPath, thresholdImage)) {
-        std::cerr << "Failed to load input image\n";
-        return 1;
-    }
-
-    img::CPUProcessor::threshold(
-        thresholdImage,
-        128
+    img::savePPM(
+        gaussianImage,
+        "images/gaussian_blur.ppm"
     );
 
-    if (!img::savePPM(
-            thresholdImage,
-            "images/gradient_threshold.ppm"
-        )) {
-        std::cerr << "Failed to save threshold image\n";
+
+    img::Image sharpenImage;
+
+    if (!img::loadPPM(source, sharpenImage)) {
         return 1;
     }
+
+    img::CPUProcessor::sharpen(sharpenImage);
+
+    img::savePPM(
+        sharpenImage,
+        "images/sharpen.ppm"
+    );
+
+
+    img::Image sobelImage;
+
+    if (!img::loadPPM(source, sobelImage)) {
+        return 1;
+    }
+
+    img::CPUProcessor::sobelEdgeDetection(
+        sobelImage
+    );
+
+    img::savePPM(
+        sobelImage,
+        "images/sobel.ppm"
+    );
 
     std::cout
-        << "CPU filters completed successfully:\n"
-        << "- images/gradient_inverted.ppm\n"
-        << "- images/gradient_grayscale.ppm\n"
-        << "- images/gradient_bright.ppm\n"
-        << "- images/gradient_contrast.ppm\n"
-        << "- images/gradient_threshold.ppm\n";
+        << "Milestone 5 filters generated.\n";
 
     return 0;
 }
