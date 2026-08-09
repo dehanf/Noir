@@ -17,7 +17,11 @@ public:
     Image(); //default constructor
     Image(int width, int height); //constructor
 
+    Image(const Image& other);// copy constructor
+
     ~Image(); //destructor
+
+    Image& operator=(const Image& other);//copy assignment operator
 
     int getWidth() const; //getter
     int getHeight() const; //getter
@@ -32,6 +36,9 @@ public:
     void setPixel(int x,int y, const Pixel& pixel); // set the pixel to x,y without modifyin gthe pixel
 
     bool resizeImage(int newWidth, int newHeight); //resize the image to newWidth and newHeight
+
+    Pixel* data();
+    const Pixel* data() const;
 
 
 

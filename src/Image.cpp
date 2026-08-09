@@ -15,6 +15,46 @@ Image::Image(int width,int height){
     this->pixels = new Pixel[width * height];
 }
 
+Image::Image(const Image& other):width{other.width},height{other.height},pixels{nullptr}{ //copy constructor
+    if (other.pixels != nullptr){
+        pixels = new Pixel[width * height];
+        
+        for(int i=0;i<width*height;i++){
+            pixels[i] = other.pixels[i];
+        }
+    }
+}
+
+Image& Image::operator=(const Image& other) //copy assignment
+{
+    if (this == &other) {
+        return *this;
+    }
+
+    Pixel* newPixels = nullptr;
+
+    if (other.pixels != nullptr) {
+        newPixels =
+            new Pixel[other.width * other.height];
+
+        for (
+            int i = 0;
+            i < other.width * other.height;
+            ++i
+        ) {
+            newPixels[i] = other.pixels[i];
+        }
+    }
+
+    delete[] pixels;
+
+    pixels = newPixels;
+    width = other.width;
+    height = other.height;
+
+    return *this;
+}
+
 /*  
 Image::Image(int,width,int height):width{width},
  height{height},
@@ -68,7 +108,11 @@ bool Image::resizeImage(
     return true;
 }
 
-
-
+Pixel* Image::data(){
+    return pixels;
 
 }
+const Pixel* Image::data() const{
+    return pixels;
+}
+
