@@ -15,38 +15,33 @@ Image::Image(int width,int height){
     this->pixels = new Pixel[width * height];
 }
 
-Image::Image(const Image& other):width{other.width},height{other.height},pixels{nullptr}{ //copy constructor
-    if (other.pixels != nullptr){
+Image::Image(const Image& other):width{other.width},height{other.height},pixels{nullptr}{ //copy constructor with member initialization 
         pixels = new Pixel[width * height];
         
         for(int i=0;i<width*height;i++){
             pixels[i] = other.pixels[i];
         }
     }
-}
+
 
 Image& Image::operator=(const Image& other) //copy assignment
 {
     if (this == &other) {
-        return *this;
+        return *this;// self-assignment check
     }
 
-    Pixel* newPixels = nullptr;
+    Pixel* newPixels = nullptr;//allocate new memory for the pixels of the other image
 
     if (other.pixels != nullptr) {
         newPixels =
             new Pixel[other.width * other.height];
 
-        for (
-            int i = 0;
-            i < other.width * other.height;
-            ++i
-        ) {
-            newPixels[i] = other.pixels[i];
+        for (int i = 0;i < other.width * other.height;++i) {
+            newPixels[i] = other.pixels[i]; //copying pixel values from other to newPixels
         }
     }
 
-    delete[] pixels;
+    delete[] pixels;//only releases the memory, also pixels is for the this object, not the other object, so it is safe to delete it
 
     pixels = newPixels;
     width = other.width;
@@ -116,3 +111,4 @@ const Pixel* Image::data() const{
     return pixels;
 }
 
+}
