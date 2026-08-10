@@ -1,5 +1,6 @@
 # Build output
 build/
+images/
 
 # Compiled object files
 *.o
