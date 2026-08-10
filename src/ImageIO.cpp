@@ -2,6 +2,9 @@
 
 #include <fstream>
 
+#include "stb_image_write.h"
+#include "stb_image.h"
+
 namespace img {
 
 bool savePPM(
@@ -105,6 +108,125 @@ bool loadPPM(
     }
 
     return true;
+}
+
+
+bool loadImage(
+    const std::string& filename,
+    Image& image
+)
+{
+    int width = 0;
+    int height = 0;
+    int channels = 0;
+
+    unsigned char* data = //char pointer to hold the image data
+        stbi_load(
+            filename.c_str(),// our image name 
+            &width,// width variable's memory address
+            &height,
+            &channels,//we send references to our variable to the function and it will fill it with the number of channels in the image
+            3
+        );
+
+    if (data == nullptr) {
+        return false;
+    }
+
+    if (!image.resizeImage(width, height)) {// if the image resizing fails ,free the allocated memory and return false
+        stbi_image_free(data);
+        return false;
+    }
+
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+
+            const int index =
+                (y * width + x) * 3;
+
+            Pixel pixel{
+                data[index],
+                data[index + 1],
+                data[index + 2]
+            };
+
+            image.setPixel(
+                x,
+                y,
+                pixel
+            );
+        }
+    }
+
+    stbi_image_free(data);
+
+    return true;
+}
+
+bool savePNG(
+    const Image& image,
+    const std::string& filename
+)
+{
+    if (
+        image.getWidth() <= 0 ||
+        image.getHeight() <= 0 ||
+        image.data() == nullptr
+    ) {
+        return false;
+    }
+
+    const int channels = 3;
+
+    const int stride =
+        image.getWidth() * channels;
+
+    const int result =
+        stbi_write_png(
+            filename.c_str(),
+            image.getWidth(),
+            image.getHeight(),
+            channels,
+            image.data(),
+            stride
+        );
+
+    return result != 0;
+}
+
+bool saveJPEG(
+    const Image& image,
+    const std::string& filename,
+    int quality
+)
+{
+    if (
+        image.getWidth() <= 0 ||
+        image.getHeight() <= 0 ||
+        image.data() == nullptr
+    ) {
+        return false;
+    }
+
+    if (quality < 1) {
+        quality = 1;
+    }
+
+    if (quality > 100) {
+        quality = 100;
+    }
+
+    const int result =
+        stbi_write_jpg(
+            filename.c_str(),
+            image.getWidth(),
+            image.getHeight(),
+            3,
+            image.data(),
+            quality
+        );
+
+    return result != 0;
 }
 
 }
