@@ -2,54 +2,46 @@
 
 #include "Image.h"
 #include "ImageIO.h"
-#include "CPUProcessor.h"
+#include "CUDAProcessor.h"
 
 int main()
 {
     img::Image image;
 
-    if (!img::loadImage(
-            "images/input.jpg",
-            image
-        )) {
-        std::cerr
-            << "Failed to load image\n";
+    std::cerr << "1. Loading image...\n";
 
+    if (!img::loadImage("images/input.jpg", image)) {
+        std::cerr << "Failed to load image\n";
         return 1;
     }
 
-    std::cout
-        << "Loaded image: "
+    std::cerr
+        << "2. Image loaded: "
         << image.getWidth()
         << " x "
         << image.getHeight()
         << '\n';
 
-    img::CPUProcessor::adjustBrightness(image, 50);
+    std::cerr << "3. Starting CUDA invert...\n";
+
+    if (!img::CUDAProcessor::invert(image)) {
+        std::cerr << "CUDA invert failed\n";
+        return 1;
+    }
+
+    std::cerr << "4. CUDA invert completed.\n";
+
+    std::cerr << "5. Saving image...\n";
 
     if (!img::savePNG(
             image,
-            "images/output.png"
+            "images/cuda_invert.png"
         )) {
-        std::cerr
-            << "Failed to save PNG\n";
-
+        std::cerr << "Failed to save image\n";
         return 1;
     }
 
-    if (!img::saveJPEG(
-            image,
-            "images/output.jpg",
-            90
-        )) {
-        std::cerr
-            << "Failed to save JPEG\n";
-
-        return 1;
-    }
-
-    std::cout
-        << "JPEG/PNG test successful.\n";
+    std::cerr << "6. Finished!\n";
 
     return 0;
 }
