@@ -11,6 +11,7 @@
 namespace img {
 namespace cuda_detail {
 
+
 inline bool uploadImage(
     Image& image,
     Pixel*& devicePixels,
@@ -59,7 +60,7 @@ inline bool uploadImage(
 
     if (error != cudaSuccess) {
         std::cerr
-            << "Host to device copy failed: "
+            << "CPU -> GPU copy failed: "
             << cudaGetErrorString(error)
             << '\n';
 
@@ -113,7 +114,7 @@ inline bool downloadImage(
 
     if (error != cudaSuccess) {
         std::cerr
-            << "Device to host copy failed: "
+            << "GPU -> CPU copy failed: "
             << cudaGetErrorString(error)
             << '\n';
 
@@ -125,6 +126,19 @@ inline bool downloadImage(
 
     return true;
 }
+
+
+inline int calculateBlocks(
+    int pixelCount,
+    int threadsPerBlock
+)
+{
+    return (
+        pixelCount +
+        threadsPerBlock - 1
+    ) / threadsPerBlock;
+}
+
 
 }
 }
