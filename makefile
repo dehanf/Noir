@@ -2,7 +2,9 @@ NVCC = nvcc
 
 NVCCFLAGS = \
 	-std=c++17 \
+	-rdc=true \
 	-Iinclude \
+	-Isrc/cuda \
 	-Ithird_party/stb \
 	-Xcompiler=-Wall,-Wextra
 
@@ -12,7 +14,8 @@ SOURCES = \
 	src/ImageIO.cpp \
 	src/CPUProcessor.cpp \
 	src/stbImage.cpp \
-	src/CUDAProcessor.cu
+	src/cuda/CUDAProcessor.cu \
+	src/cuda/PointFilters.cu
 
 TARGET = build/noir
 
