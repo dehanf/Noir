@@ -8,10 +8,9 @@ namespace img {
 class CUDAProcessor {
 public:
     static bool invert(Image& image);
+    static bool grayscale(Image& image);
 };
 
 }
 
 #endif
-
-
