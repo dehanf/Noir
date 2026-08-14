@@ -3,8 +3,25 @@
 
 #include <cuda_runtime.h>
 
+
+
+
+
 namespace img {
 
+    
+__device__ unsigned char clampChannel(int value)
+{
+    if (value < 0) {
+        return 0;
+    }
+
+    if (value > 255) {
+        return 255;
+    }
+
+    return static_cast<unsigned char>(value);
+}
 
 __global__ void invertKernel(
     Pixel* pixels,
